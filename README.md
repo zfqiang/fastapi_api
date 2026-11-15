@@ -75,10 +75,15 @@ pytest
 
 ## 团队成员（clone 后复现）
 ```
-# 2. 用声明文件复现 conda 环境
+
+# 导出干净的依赖声明
+conda env export --from-history > environment.yml
+pip freeze > requirements.txt
+
+# 用声明文件复现 conda 环境
 conda env create -f environment.yml
 conda activate myproj
 
-# 3. 如有 pip 层依赖
+# 如有 pip 层依赖
 pip install -r requirements.txt
 ```
