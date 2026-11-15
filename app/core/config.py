@@ -14,10 +14,12 @@ class Settings(BaseSettings):
 
     app_env: Literal["development", "test", "production"] = "development"
     app_name: str = "FastAPI Async API"
-    database_url: str = (
-        "mysql+asyncmy://app:app@localhost:3306/app_db?charset=utf8mb4"
-    )
+    database_url: str = "mysql+asyncmy://app:app@localhost:3306/app_db?charset=utf8mb4"
     redis_url: str = "redis://localhost:6379/0"
+    redis_host: str = "localhost"
+    redis_port: int = 6379
+    redis_db: int = 0
+    redis_password: str = ""
     secret_key: str = "local-development-secret-change-before-deploying"
     jwt_algorithm: Literal["HS256"] = "HS256"
     access_token_minutes: int = 15
@@ -34,7 +36,9 @@ class Settings(BaseSettings):
             self.secret_key == "local-development-secret-change-before-deploying"
             or len(self.secret_key) < 32
         ):
-            raise ValueError("Production requires a secret key of at least 32 characters")
+            raise ValueError(
+                "Production requires a secret key of at least 32 characters"
+            )
         if self.access_token_minutes < 1 or self.refresh_token_days < 1:
             raise ValueError("Token lifetimes must be positive")
         if (

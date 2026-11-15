@@ -6,6 +6,8 @@ from redis.exceptions import RedisError
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
+from app.api.deps import RedisClient
+
 router = APIRouter(prefix="/health", tags=["health"])
 
 
@@ -15,7 +17,7 @@ async def liveness() -> dict[str, str]:
 
 
 @router.get("/ready")
-async def readiness(request: Request) -> JSONResponse:
+async def readiness(request: Request, redis: RedisClient) -> JSONResponse:
     async def check_database() -> bool:
         try:
             async with request.app.state.engine.connect() as connection:
@@ -26,7 +28,7 @@ async def readiness(request: Request) -> JSONResponse:
 
     async def check_redis() -> bool:
         try:
-            return bool(await request.app.state.redis.ping())
+            return bool(await redis.ping())
         except RedisError:
             return False
 
